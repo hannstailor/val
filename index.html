@@ -40,10 +40,10 @@
       z-index: 9999;
     }
 
-    /* ✅ CARD WIDTH WIDENED */
+    /* ✅ FIX 1: 카드가 화면 밖으로 나가면 안됨 (108vw 금지) */
     .card {
-      width: min(920px, 108vw);    /* 기존 720px/92vw -> 더 넓게 */
-      padding: 46px 44px 30px;         /* 여백도 살짝 증가 */
+      width: min(1040px, 94vw);        /* ✅ 94vw: 항상 화면 안에 들어옴 */
+      padding: 46px 56px 34px;         /* 좌우 여백도 넉넉히 */
       background: var(--card);
       backdrop-filter: blur(10px);
       border-radius: 22px;
@@ -51,24 +51,29 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.15);
     }
 
-    /* ✅ OWL CENTERED (STABLE) */
+    /* ✅ FIX 2: SVG를 flex로 감싸서 “진짜 중앙”으로 */
+    .art-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
     .art {
-      width: min(260px, 80vw);
-      margin: 0 auto 14px;
+      width: min(260px, 70vw);
       display: block;
       filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
+      /* SVG가 시각적으로 미세하게 치우쳐 보이면 아래 값만 0~6px 사이로 조절 */
+      transform: translateX(-2px); /* ✅ 오른쪽 치우침 보정(필요시 -3px~-1px로 조절) */
     }
 
-    /* ✅ TITLE: NO LINE BREAK */
+    /* ✅ 제목이 카드 밖으로 나가는 현상 방지:
+       - nowrap 유지하되, 폰트를 조금 더 유연하게 줄어들게 */
     h1 {
-      font-size: clamp(22px, 3.2vw, 44px);
+      font-size: clamp(18px, 2.8vw, 44px);
       margin: 12px 0 18px;
-      white-space: nowrap;         /* 줄바꿈 방지 */
-    }
-
-    /* 아주 작은 화면에서는 폰트 더 줄여서 한 줄 유지 */
-    @media (max-width: 480px) {
-      h1 { font-size: 18px; }
+      white-space: nowrap;
+      max-width: 100%;
     }
 
     .button-zone {
@@ -121,19 +126,30 @@
     }
 
     .result h2 {
-      font-size: clamp(30px, 4.5vw, 46px);
-      margin: 10px 0;
+      font-size: clamp(26px, 4vw, 44px);
+      margin: 10px 0 14px;
     }
 
     .fireworks {
-      width: min(380px, 90vw);
+      width: min(520px, 92vw);
+      max-height: 55vh;
+      object-fit: contain;
       margin: 0 auto;
       display: block;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.14);
     }
 
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
+    }
+
+    /* 모바일에서는 좌우 padding을 조금 줄여서 답답하지 않게 */
+    @media (max-width: 480px) {
+      .card { padding: 34px 22px 26px; }
+      h1 { font-size: 16px; }
+      .art { transform: translateX(-1px); }
     }
   </style>
 </head>
@@ -142,43 +158,45 @@
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
-    <!-- ANIMAL WITH HEART -->
-    <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="fur" x1="0" x2="1">
-          <stop offset="0" stop-color="#f7c7a1"/>
-          <stop offset="1" stop-color="#f2a97b"/>
-        </linearGradient>
-        <linearGradient id="heart" x1="0" x2="1">
-          <stop offset="0" stop-color="#ff4d7d"/>
-          <stop offset="1" stop-color="#ff1f68"/>
-        </linearGradient>
-      </defs>
+    <!-- ✅ SVG WRAP (진짜 중앙 정렬) -->
+    <div class="art-wrap">
+      <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fur" x1="0" x2="1">
+            <stop offset="0" stop-color="#f7c7a1"/>
+            <stop offset="1" stop-color="#f2a97b"/>
+          </linearGradient>
+          <linearGradient id="heart" x1="0" x2="1">
+            <stop offset="0" stop-color="#ff4d7d"/>
+            <stop offset="1" stop-color="#ff1f68"/>
+          </linearGradient>
+        </defs>
 
-      <path d="M250 50 C250 33 270 25 282 38
-               C294 25 314 33 314 50
-               C314 78 282 92 282 106
-               C282 92 250 78 250 50Z"
-            fill="url(#heart)"/>
+        <path d="M250 50 C250 33 270 25 282 38
+                 C294 25 314 33 314 50
+                 C314 78 282 92 282 106
+                 C282 92 250 78 250 50Z"
+              fill="url(#heart)"/>
 
-      <path d="M90 120 C90 70 140 40 190 60
-               C240 40 290 70 290 120
-               C290 180 240 210 190 210
-               C140 210 90 180 90 120Z"
-            fill="url(#fur)"/>
+        <path d="M90 120 C90 70 140 40 190 60
+                 C240 40 290 70 290 120
+                 C290 180 240 210 190 210
+                 C140 210 90 180 90 120Z"
+              fill="url(#fur)"/>
 
-      <path d="M110 92 L95 55 L140 78 Z" fill="#f2a97b"/>
-      <path d="M270 92 L285 55 L240 78 Z" fill="#f2a97b"/>
+        <path d="M110 92 L95 55 L140 78 Z" fill="#f2a97b"/>
+        <path d="M270 92 L285 55 L240 78 Z" fill="#f2a97b"/>
 
-      <circle cx="160" cy="130" r="8"/>
-      <circle cx="220" cy="130" r="8"/>
+        <circle cx="160" cy="130" r="8"/>
+        <circle cx="220" cy="130" r="8"/>
 
-      <path d="M190 144 C186 144 182 148 182 152
-               C182 160 190 164 190 170
-               C190 164 198 160 198 152
-               C198 148 194 144 190 144Z"
-            fill="#ff7aa2"/>
-    </svg>
+        <path d="M190 144 C186 144 182 148 182 152
+                 C182 160 190 164 190 170
+                 C190 164 198 160 198 152
+                 C198 148 194 144 190 144Z"
+              fill="#ff7aa2"/>
+      </svg>
+    </div>
 
     <h1>Sijin, Will you be my Valentine, as always?</h1>
 
@@ -187,7 +205,6 @@
       <button id="noBtn">No</button>
     </section>
 
-    <!-- HINT -->
     <div class="hint" id="hint">“No” seems a bit shy 😈</div>
 
     <section class="result" id="result">
@@ -199,6 +216,7 @@
         loading="lazy"
       />
     </section>
+  </main> <!-- ✅ 빠져있던 닫는 태그 추가 -->
 
   <script>
     const zone = document.getElementById("zone");
@@ -309,6 +327,3 @@
   </script>
 </body>
 </html>
-
-
-
