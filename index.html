@@ -173,9 +173,17 @@
       .card { padding: 34px 22px 26px; }
       h1 { font-size: 16px; }
       .art { transform: translateX(-1px); }
-
+    
       .card.celebrate { padding-top: 18px; }
       .card.celebrate .fireworks { width: 96%; max-height: 62vh; }
+    }
+    
+    /* ✅ PC에서 70%로 보이게 */
+    html { zoom: 0.7; }
+    
+    /* ✅ 모바일/태블릿(768px 이하)은 원래 크기 */
+    @media (max-width: 768px) {
+      html { zoom: 1; }
     }
   </style>
 </head>
@@ -357,5 +365,6 @@
   </script>
 </body>
 </html>
+
 
 
