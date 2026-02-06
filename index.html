@@ -40,9 +40,10 @@
       z-index: 9999;
     }
 
+    /* ✅ CARD WIDTH WIDENED */
     .card {
-      width: min(720px, 92vw);
-      padding: 26px 22px;
+      width: min(920px, 96vw);    /* 기존 720px/92vw -> 더 넓게 */
+      padding: 30px 26px;         /* 여백도 살짝 증가 */
       background: var(--card);
       backdrop-filter: blur(10px);
       border-radius: 22px;
@@ -50,16 +51,24 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.15);
     }
 
+    /* ✅ OWL CENTERED (STABLE) */
     .art {
       width: min(260px, 80vw);
-      margin: 0 auto 10px;
+      margin: 0 auto 14px;
       display: block;
       filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
     }
 
+    /* ✅ TITLE: NO LINE BREAK */
     h1 {
-      font-size: clamp(26px, 4vw, 44px);
+      font-size: clamp(22px, 3.2vw, 44px);
       margin: 12px 0 18px;
+      white-space: nowrap;         /* 줄바꿈 방지 */
+    }
+
+    /* 아주 작은 화면에서는 폰트 더 줄여서 한 줄 유지 */
+    @media (max-width: 480px) {
+      h1 { font-size: 18px; }
     }
 
     .button-zone {
@@ -182,7 +191,7 @@
     <div class="hint" id="hint">“No” seems a bit shy 😈</div>
 
     <section class="result" id="result">
-      <h2>🎉 HAPPY BIRTHDAY !! 🎉</h2>
+      <h2>🎉 HAPPY BIRTHDAY 🎉</h2>
       <img
         class="fireworks"
         src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
@@ -292,7 +301,7 @@
     /* ---------- YES CLICK ---------- */
     yesBtn.addEventListener("click", () => {
       zone.style.display = "none";
-      hint.style.display = "none";     // HIDE THE HINT
+      hint.style.display = "none";
       result.style.display = "block";
       resizeConfettiCanvas();
       fullScreenConfetti();
@@ -300,13 +309,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
