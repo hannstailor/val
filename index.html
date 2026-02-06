@@ -40,10 +40,10 @@
       z-index: 9999;
     }
 
-    /* ✅ FIX 1: 카드가 화면 밖으로 나가면 안됨 (108vw 금지) */
+    /* ✅ 카드가 화면 밖으로 절대 나가지 않게 (108vw 제거) */
     .card {
-      width: min(1040px, 94vw);        /* ✅ 94vw: 항상 화면 안에 들어옴 */
-      padding: 46px 56px 34px;         /* 좌우 여백도 넉넉히 */
+      width: min(1040px, 94vw);
+      padding: 46px 56px 34px;
       background: var(--card);
       backdrop-filter: blur(10px);
       border-radius: 22px;
@@ -51,7 +51,7 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.15);
     }
 
-    /* ✅ FIX 2: SVG를 flex로 감싸서 “진짜 중앙”으로 */
+    /* ✅ 부엉이 SVG 중앙 정렬(시각 중심 보정 포함) */
     .art-wrap {
       display: flex;
       justify-content: center;
@@ -63,12 +63,10 @@
       width: min(260px, 70vw);
       display: block;
       filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
-      /* SVG가 시각적으로 미세하게 치우쳐 보이면 아래 값만 0~6px 사이로 조절 */
-      transform: translateX(-2px); /* ✅ 오른쪽 치우침 보정(필요시 -3px~-1px로 조절) */
+      transform: translateX(-2px); /* SVG가 오른쪽으로 치우쳐 보일 때 미세 보정 */
     }
 
-    /* ✅ 제목이 카드 밖으로 나가는 현상 방지:
-       - nowrap 유지하되, 폰트를 조금 더 유연하게 줄어들게 */
+    /* ✅ 제목(첫 화면) */
     h1 {
       font-size: clamp(18px, 2.8vw, 44px);
       margin: 12px 0 18px;
@@ -145,7 +143,20 @@
       to { transform: scale(1); opacity: 1; }
     }
 
-    /* 모바일에서는 좌우 padding을 조금 줄여서 답답하지 않게 */
+    /* ✅ YES 누른 후(두번째 화면)만: Sijin 문장 숨기고, HAPPY BIRTHDAY 위로 */
+    .card.celebrate #title {
+      display: none;
+    }
+
+    .card.celebrate .result {
+      margin-top: 0;
+    }
+
+    .card.celebrate .result h2 {
+      margin: 0 0 12px; /* 위쪽 여백 제거해서 더 위로 올라감 */
+    }
+
+    /* 모바일 */
     @media (max-width: 480px) {
       .card { padding: 34px 22px 26px; }
       h1 { font-size: 16px; }
@@ -158,8 +169,8 @@
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
-    <!-- ✅ SVG WRAP (진짜 중앙 정렬) -->
     <div class="art-wrap">
+      <!-- ANIMAL WITH HEART -->
       <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="fur" x1="0" x2="1">
@@ -198,7 +209,8 @@
       </svg>
     </div>
 
-    <h1>Sijin, Will you be my Valentine, as always?</h1>
+    <!-- ✅ 첫 화면에서는 보이고, YES 누르면 숨김 -->
+    <h1 id="title">Sijin, Will you be my Valentine, as always?</h1>
 
     <section class="button-zone" id="zone">
       <button id="yesBtn">Yes</button>
@@ -216,7 +228,7 @@
         loading="lazy"
       />
     </section>
-  </main> <!-- ✅ 빠져있던 닫는 태그 추가 -->
+  </main>
 
   <script>
     const zone = document.getElementById("zone");
@@ -318,9 +330,13 @@
 
     /* ---------- YES CLICK ---------- */
     yesBtn.addEventListener("click", () => {
+      // ✅ 두번째 화면 전용 스타일 적용
+      document.querySelector(".card").classList.add("celebrate");
+
       zone.style.display = "none";
       hint.style.display = "none";
       result.style.display = "block";
+
       resizeConfettiCanvas();
       fullScreenConfetti();
     });
